@@ -40,7 +40,7 @@ export default function Login() {
                 </div>
 
                 <h2 className="text-3xl font-extrabold text-white text-center mb-8">
-                    Create Account
+                    Login to Your Account
                 </h2>
 
                 <form onSubmit={handleLogin} className="flex flex-col gap-4">
@@ -65,7 +65,7 @@ export default function Login() {
                         type="submit"
                         className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-lg rounded-lg px-4 py-3 mt-4 shadow-lg hover:shadow-yellow-400/20 transition-all active:scale-95"
                     >
-                        Sign Up Now
+                        Login Now
                     </button>
 
                 </form>
