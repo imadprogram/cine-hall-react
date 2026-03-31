@@ -1,0 +1,98 @@
+.welcome-container {
+    background-image: url('../assets/movies.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+}
+
+.welcome-content {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    /* Ensures padding doesn't break layout */
+    padding-left: 50%;
+    /* Keeps text on the right side */
+    padding-right: 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Centers vertically perfectly */
+    gap: 2rem;
+    /* Reduced gap so it looks unified */
+    background: linear-gradient(to right, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.8) 50%, rgba(0, 0, 0, 0.95) 100%);
+    /* Smooth black fade on the right half */
+    color: white;
+}
+
+.welcome-title {
+    font-size: 4.5rem;
+    /* Slightly balanced huge text */
+    font-weight: 800;
+    /* Extra bold */
+    line-height: 1.1;
+    /* Tighter line spacing */
+    margin: 0;
+}
+
+.welcome-subtitle {
+    font-size: 1.5rem;
+    /* Larger, readable subtitle */
+    font-weight: 400;
+    color: #e0e0e0;
+    /* Slightly dimmed white */
+    margin: 0;
+}
+
+.auth-btns {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.auth-btn {
+    padding: 12px 35px;
+    background-color: #FFD700;
+    color: black;
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-decoration: none;
+    text-align: center;
+    border-radius: 6px;
+    /* Sleek, modern rounded edges instead of pills */
+    box-shadow: 0px 4px 15px rgba(255, 215, 0, 0.2);
+    transition: all 0.3s ease;
+    border: 2px solid #FFD700;
+    /* Prepares border for outline style */
+}
+
+/* Make the second button (Login) an outline button for hierarchy! */
+.auth-btn:last-child {
+    background-color: transparent;
+    color: white;
+    border: 2px solid white;
+    box-shadow: none;
+}
+
+.auth-btn:hover {
+    transform: translateY(-2px);
+    background-color: #ffea00;
+    color: black;
+    border-color: #ffea00;
+    box-shadow: 0px 8px 20px rgba(255, 215, 0, 0.4);
+}
+
+.auth-btn:last-child:hover {
+    background-color: white;
+    color: black;
+}
+
+/* Properly format the Cinema Icon */
+.welcome-icon {
+    font-size: 5rem !important;
+    /* Huge icon */
+    color: #FFD700;
+    margin-bottom: -1rem;
+    /* Pulls it closer to the title */
+    filter: drop-shadow(0px 0px 10px rgba(255, 215, 0, 0.5));
+    /* Adds a glowing effect */
+}
