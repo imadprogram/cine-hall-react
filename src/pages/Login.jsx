@@ -1,26 +1,41 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 export default function Login() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
+    const [error, setError] = useState(null)
+    const navigate = useNavigate();
 
     async function handleLogin(e) {
         e.preventDefault();
-        const response = await fetch('http://localhost:8000/api/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email: email, password: password })
-        })
+        setError(null);
+        try {
 
-        const data = await response.json();
+            const response = await fetch('http://localhost:8000/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: email, password: password })
+            })
 
-        console.log(data)
+            const data = await response.json();
+
+            console.log(data)
+
+            if (!response.ok) {
+                setError(data.message || data.error || "login failed. Try again")
+                return
+            }
+
+            localStorage.setItem('token' , data.access_token)
+            navigate('/home')
+        } catch {
+            setError('Could not connect to the server')
+        }
     }
 
 
@@ -39,9 +54,16 @@ export default function Login() {
                     </Link>
                 </div>
 
-                <h2 className="text-3xl font-extrabold text-white text-center mb-8">
+                <h2 className="text-3xl font-extrabold text-white text-center mb-6">
                     Login to Your Account
                 </h2>
+
+                {/* Show red error box if backend returned an error */}
+                {error && (
+                    <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm font-semibold p-3 rounded-lg mb-6 text-center">
+                        {error}
+                    </div>
+                )}
 
                 <form onSubmit={handleLogin} className="flex flex-col gap-4">
 
