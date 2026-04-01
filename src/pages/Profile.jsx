@@ -8,9 +8,8 @@ export default function Profile() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [password, setPassword] = useState("");
+
 
   useEffect(() => {
     (async function fetchProfile() {
@@ -48,8 +47,22 @@ export default function Profile() {
 
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
-    if (newPassword !== confirmPassword) return alert("Passwords don't match!");
-    console.log("Updating password...");
+    const response = await fetch('http://localhost:8000/api/profile', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify({ password: password })
+    })
+
+    const data = await response.json();
+    let statusMessage;
+    if(response.ok){
+      toast.success("password updated")
+    }else{
+      toast.error(data.message || "Failed to update password")
+    }
   };
 
   return (
@@ -83,17 +96,9 @@ export default function Profile() {
             <form onSubmit={handleUpdatePassword} className="space-y-4">
               <input 
                 className="w-full bg-neutral-800 text-white rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-neutral-400"
-                type="password" placeholder="Old Password" onChange={(e) => setOldPassword(e.target.value)}
+                type="password" placeholder="New Password" onChange={(e) => setPassword(e.target.value)}
               />
               <hr className="border-neutral-800 my-2" />
-              <input 
-                className="w-full bg-neutral-800 text-white rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-yellow-400"
-                type="password" placeholder="New Password" onChange={(e) => setNewPassword(e.target.value)}
-              />
-              <input 
-                className="w-full bg-neutral-800 text-white rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-yellow-400"
-                type="password" placeholder="Confirm New Password" onChange={(e) => setConfirmPassword(e.target.value)}
-              />
               <button type="submit" className="w-full border-2 border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black font-bold py-3 rounded-lg transition-all text-sm italic">
                 Change Password
               </button>
