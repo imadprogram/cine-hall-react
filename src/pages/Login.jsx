@@ -32,6 +32,7 @@ export default function Login() {
             }
 
             localStorage.setItem('token' , data.access_token)
+            localStorage.setItem('is_admin' , data.user.is_admin)
             navigate('/home')
         } catch {
             setError('Could not connect to the server')
