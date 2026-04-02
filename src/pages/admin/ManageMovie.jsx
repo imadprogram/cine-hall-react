@@ -13,8 +13,10 @@ import toast from 'react-hot-toast'
 export default function ManageMovie() {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false)
+    const [deleteModal, setDeleteModal] = useState(false)
+    const [selectedId , setSelectedId] = useState(null)
 
-    // 1. Separate States for each field
+
     const [title, setTitle] = useState('')
     const [duration, setDuration] = useState('')
     const [genre, setGenre] = useState('')
@@ -66,6 +68,37 @@ export default function ManageMovie() {
         }
     }
 
+
+
+    async function deleteMovie(e){
+        e.preventDefault() 
+        setError(null)
+        
+        try{
+
+            const response = await fetch(`http://localhost:8000/api/films/${selectedId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+    
+            const data = await response.json()
+    
+            if(!response.ok){
+                toast.error("Could not delete this movie")
+            }else{
+                setDeleteModal(false)
+                toast.success("Movie has been deleted")
+            }
+
+        }catch{
+            setError("Could not connect to the server")
+        }
+
+    }
+
     return (
         <div className="bg-[#091413] min-h-screen w-full">
             <Header />
@@ -103,7 +136,7 @@ export default function ManageMovie() {
                                     <button onClick={() => navigate(`/EditMovie/${film.id}`)} className="text-xs border border-yellow-400/50 text-yellow-400 hover:bg-yellow-400/10 py-1.5 rounded-lg transition-all">
                                         Edit
                                     </button>
-                                    <button className="text-xs border border-red-500/50 text-red-400 hover:bg-red-500/10 py-1.5 rounded-lg transition-all">
+                                    <button onClick={() => {setDeleteModal(true); setSelectedId(film.id)}} className="text-xs border border-red-500/50 text-red-400 hover:bg-red-500/10 py-1.5 rounded-lg transition-all">
                                         Delete
                                     </button>
                                 </div>
@@ -206,6 +239,39 @@ export default function ManageMovie() {
                         >
                             ✕
                         </button>
+                    </div>
+                </div>
+            )}
+
+
+            {deleteModal && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                    <div className="bg-neutral-900 border border-neutral-800 w-full max-w-sm p-8 rounded-3xl shadow-2xl text-center">
+
+                        {/* ICON */}
+                        <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto mb-6">
+                            <span className="text-red-400 text-3xl">🗑</span>
+                        </div>
+
+                        <h2 className="text-xl font-bold text-white mb-2">Delete Film?</h2>
+                        <p className="text-neutral-500 text-sm mb-8">
+                            This action is permanent and cannot be undone.
+                        </p>
+
+                        <form onSubmit={deleteMovie} className="flex gap-3">
+                            <button
+                                onClick={() => setDeleteModal(false)}
+                                className="w-full border-2 border-neutral-700 text-neutral-400 hover:border-neutral-500 hover:text-white font-bold py-3 rounded-xl transition-all"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-all active:scale-95 shadow-lg shadow-red-500/20"
+                            >
+                                Delete
+                            </button>
+                        </form>
+
                     </div>
                 </div>
             )}
