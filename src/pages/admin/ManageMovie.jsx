@@ -14,7 +14,7 @@ export default function ManageMovie() {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false)
     const [deleteModal, setDeleteModal] = useState(false)
-    const [selectedId , setSelectedId] = useState(null)
+    const [selectedId, setSelectedId] = useState(null)
 
 
     const [title, setTitle] = useState('')
@@ -28,14 +28,15 @@ export default function ManageMovie() {
     const [films, setFilms] = useState([])
 
 
+    async function fetchFilms() {
+        const response = await fetch("http://localhost:8000/api/films", {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        })
+        const data = await response.json()
+        setFilms(data)
+    }
+
     useEffect(() => {
-        async function fetchFilms() {
-            const response = await fetch("http://localhost:8000/api/films", {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-            })
-            const data = await response.json()
-            setFilms(data)
-        }
         fetchFilms()
     }, [])
 
@@ -62,6 +63,15 @@ export default function ManageMovie() {
             } else {
                 setIsOpen(false)
                 toast.success("Movie has added succussfully")
+                fetchFilms()
+
+                setTitle('')
+                setDuration('')
+                setImage('')
+                setTrailer('')
+                setGenre('')
+                setAge(10)
+                setDescription('')
             }
         } catch {
             setError("Could not connect to the server")
@@ -70,11 +80,11 @@ export default function ManageMovie() {
 
 
 
-    async function deleteMovie(e){
-        e.preventDefault() 
+    async function deleteMovie(e) {
+        e.preventDefault()
         setError(null)
-        
-        try{
+
+        try {
 
             const response = await fetch(`http://localhost:8000/api/films/${selectedId}`, {
                 method: 'DELETE',
@@ -83,17 +93,18 @@ export default function ManageMovie() {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             })
-    
+
             const data = await response.json()
-    
-            if(!response.ok){
+
+            if (!response.ok) {
                 toast.error("Could not delete this movie")
-            }else{
+            } else {
                 setDeleteModal(false)
                 toast.success("Movie has been deleted")
+                fetchFilms()
             }
 
-        }catch{
+        } catch {
             setError("Could not connect to the server")
         }
 
@@ -136,7 +147,7 @@ export default function ManageMovie() {
                                     <button onClick={() => navigate(`/EditMovie/${film.id}`)} className="text-xs border border-yellow-400/50 text-yellow-400 hover:bg-yellow-400/10 py-1.5 rounded-lg transition-all">
                                         Edit
                                     </button>
-                                    <button onClick={() => {setDeleteModal(true); setSelectedId(film.id)}} className="text-xs border border-red-500/50 text-red-400 hover:bg-red-500/10 py-1.5 rounded-lg transition-all">
+                                    <button onClick={() => { setDeleteModal(true); setSelectedId(film.id) }} className="text-xs border border-red-500/50 text-red-400 hover:bg-red-500/10 py-1.5 rounded-lg transition-all">
                                         Delete
                                     </button>
                                 </div>
@@ -260,12 +271,14 @@ export default function ManageMovie() {
 
                         <form onSubmit={deleteMovie} className="flex gap-3">
                             <button
+                                type="button"
                                 onClick={() => setDeleteModal(false)}
                                 className="w-full border-2 border-neutral-700 text-neutral-400 hover:border-neutral-500 hover:text-white font-bold py-3 rounded-xl transition-all"
                             >
                                 Cancel
                             </button>
                             <button
+                                type="submit"
                                 className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-all active:scale-95 shadow-lg shadow-red-500/20"
                             >
                                 Delete

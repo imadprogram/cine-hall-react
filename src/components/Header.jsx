@@ -17,9 +17,6 @@ export default function Header() {
                 <Link to="/home">
                     Home
                 </Link>
-                <Link to="/movies">
-                    Movies
-                </Link>
             </div>
             <div className='w-full'></div>
             {isAdmin && (

@@ -4,11 +4,12 @@ import Welcome from "./pages/Welcome";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
-import Movies from "./pages/Movies"
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 import ManageMovie from "./pages/admin/ManageMovie";
 import EditMovie from "./pages/admin/EditMovie";
+import MovieDetails from "./pages/MovieDetails";
+import Rooms from "./pages/admin/Rooms"
 
 export default function App() {
 
@@ -20,11 +21,12 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/movies" element={<Movies />} />
+        <Route path="/movies/:id" element={<MovieDetails />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/ManageMovie" element={<ManageMovie />} />
         <Route path="/EditMovie/:id" element={<EditMovie />} />
+        <Route path="/Rooms" element={<Rooms />} />
       </Routes>
     </>
   )
