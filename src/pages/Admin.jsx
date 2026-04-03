@@ -10,7 +10,7 @@ export default function Admin() {
     const tools = [
         { title: "Manage movies", icon: <MovieIcon fontSize="large" />, desc: "Add, Edit or Remove films", to: "/ManageMovie" },
         { title: "Manage Rooms", icon: <AddLocationIcon fontSize="large" />, desc: "Configure Normal and VIP rooms", to:"/Rooms"},
-        { title: "Manage Sessions", icon: <AccessTimeIcon fontSize="large" />, desc: "Assign movies to rooms and times", to:"/"},
+        { title: "Manage Sessions", icon: <AccessTimeIcon fontSize="large" />, desc: "Assign movies to rooms and times", to:"/Sessions"},
         { title: "System Settings", icon: <SettingsIcon fontSize="large" />, desc: "Configure global app settings", to:"/"},
     ];
 

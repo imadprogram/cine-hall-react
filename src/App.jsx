@@ -1,3 +1,4 @@
+import './App.css';
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from 'react-hot-toast'
 import Welcome from "./pages/Welcome";
@@ -10,6 +11,7 @@ import ManageMovie from "./pages/admin/ManageMovie";
 import EditMovie from "./pages/admin/EditMovie";
 import MovieDetails from "./pages/MovieDetails";
 import Rooms from "./pages/admin/Rooms"
+import Sessions from "./pages/admin/ManageSessions"
 
 export default function App() {
 
@@ -27,6 +29,7 @@ export default function App() {
         <Route path="/ManageMovie" element={<ManageMovie />} />
         <Route path="/EditMovie/:id" element={<EditMovie />} />
         <Route path="/Rooms" element={<Rooms />} />
+        <Route path="/Sessions" element={<Sessions />} />
       </Routes>
     </>
   )

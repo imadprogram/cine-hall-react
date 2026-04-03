@@ -96,9 +96,6 @@ export default function Rooms() {
                             <div className="flex justify-between items-start mb-6">
                                 <div>
                                     <h3 className="text-white font-bold text-xl mb-2">{room.name}</h3>
-                                    <span className="bg-yellow-400/10 border border-yellow-400/20 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full">
-                                        {room.type || 'Normal'}
-                                    </span>
                                 </div>
                                 <div className="text-right flex flex-col items-end">
                                     <div className="bg-neutral-800 p-2 rounded-lg text-center mb-1">
