@@ -12,6 +12,8 @@ import EditMovie from "./pages/admin/EditMovie";
 import MovieDetails from "./pages/MovieDetails";
 import Rooms from "./pages/admin/Rooms"
 import Sessions from "./pages/admin/ManageSessions"
+import BookSeat from "./pages/BookSeat";
+import Reservations from "./pages/Reservations";
 
 export default function App() {
 
@@ -23,7 +25,9 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/reservations" element={<Reservations />} />
         <Route path="/movies/:id" element={<MovieDetails />} />
+        <Route path="/book/:id" element={<BookSeat />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/ManageMovie" element={<ManageMovie />} />

@@ -14,8 +14,11 @@ export default function Header() {
                     <MovieIcon sx={{ fontSize: 45 }} className="drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]" />
                 </Link>
 
-                <Link to="/home">
+                <Link to="/home" className="hover:text-yellow-400 transition-colors">
                     Home
+                </Link>
+                <Link to="/reservations" className="hover:text-yellow-400 transition-colors">
+                    My Tickets
                 </Link>
             </div>
             <div className='w-full'></div>
