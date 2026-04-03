@@ -1,22 +1,40 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 
 export default function MovieDetails() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [film, setFilm] = useState(null);
+    const [sessions, setSessions] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedDate, setSelectedDate] = useState(null);
 
     useEffect(() => {
-        (async function fetchFilm() {
+        (async function fetchData() {
             try {
-                const response = await fetch(`http://localhost:8000/api/films/${id}`, {
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-                });
-                const data = await response.json();
-                setFilm(data);
-            } catch {
-                console.error("Failed to fetch film.");
+                const headers = { 'Authorization': `Bearer ${localStorage.getItem('token')}` };
+
+                // Fetch Film
+                const filmRes = await fetch(`http://localhost:8000/api/films/${id}`, { headers });
+                const filmData = await filmRes.json();
+                setFilm(filmData);
+
+                // Fetch Sessions and filter for this film
+                const sessionRes = await fetch(`http://localhost:8000/api/seances`, { headers });
+                const sessionData = await sessionRes.json();
+
+                const filmSessions = sessionData.filter(s => s.film_id === parseInt(id));
+                setSessions(filmSessions);
+
+                // Group dates just to pick the first one as default selected
+                if (filmSessions.length > 0) {
+                    const uniqueDates = [...new Set(filmSessions.map(s => s.start_time.split(' ')[0]))];
+                    setSelectedDate(uniqueDates.sort()[0]);
+                }
+
+            } catch (err) {
+                console.error("Failed to fetch data", err);
             } finally {
                 setLoading(false);
             }
@@ -35,8 +53,17 @@ export default function MovieDetails() {
         </div>
     );
 
+    const groupedSessions = sessions.reduce((acc, session) => {
+        const datePart = session.start_time.split(' ')[0]; // gets YYYY-MM-DD
+        if (!acc[datePart]) acc[datePart] = [];
+        acc[datePart].push(session);
+        return acc;
+    }, {});
+
+    const availableDates = Object.keys(groupedSessions).sort();
+
     return (
-        <div className="min-h-screen bg-neutral-950 text-white font-sans">
+        <div className="min-h-screen bg-neutral-950 text-white font-sans pb-20">
             <Header />
 
             {/* HERO SECTION */}
@@ -99,14 +126,87 @@ export default function MovieDetails() {
                     Book a Session
                 </h2>
 
-                {/* NO SESSIONS YET */}
-                <div className="border border-dashed border-neutral-700 rounded-3xl p-16 flex flex-col items-center justify-center text-center">
-                    <div className="text-5xl mb-4">🎬</div>
-                    <h3 className="text-xl font-bold text-white mb-2">No Sessions Available Yet</h3>
-                    <p className="text-neutral-500 text-sm max-w-sm">
-                        Sessions for this film haven't been scheduled yet. Check back soon!
-                    </p>
-                </div>
+                {sessions.length === 0 ? (
+                    <div className="border border-dashed border-neutral-700 rounded-3xl p-16 flex flex-col items-center justify-center text-center">
+                        <div className="text-5xl mb-4">🎬</div>
+                        <h3 className="text-xl font-bold text-white mb-2">No Sessions Available Yet</h3>
+                        <p className="text-neutral-500 text-sm max-w-sm">
+                            Sessions for this film haven't been scheduled yet. Check back soon!
+                        </p>
+                    </div>
+                ) : (
+                    <div>
+                        {/* DATE TABS */}
+                        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide mb-8">
+                            {availableDates.map(date => {
+                                const dateObj = new Date(date);
+                                const dayName = dateObj.toLocaleDateString([], { weekday: 'short' });
+                                const dayNum = dateObj.toLocaleDateString([], { day: 'numeric' });
+                                const monthName = dateObj.toLocaleDateString([], { month: 'short' });
+                                const isSelected = selectedDate === date;
+
+                                return (
+                                    <button
+                                        key={date}
+                                        onClick={() => setSelectedDate(date)}
+                                        className={`flex-shrink-0 flex flex-col items-center justify-center py-4 px-6 rounded-2xl transition-all active:scale-95 ${isSelected
+                                                ? 'bg-yellow-400 text-black shadow-lg shadow-yellow-400/20'
+                                                : 'bg-neutral-900 text-white border border-neutral-800 hover:border-yellow-400/50'
+                                            }`}
+                                    >
+                                        <span className={`text-xs font-bold uppercase tracking-widest mb-1 ${isSelected ? 'text-black/60' : 'text-neutral-500'}`}>
+                                            {dayName}
+                                        </span>
+                                        <span className="text-3xl font-black">{dayNum}</span>
+                                        <span className={`text-xs font-bold uppercase mt-1 ${isSelected ? 'text-black/60' : 'text-neutral-500'}`}>
+                                            {monthName}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        {/* TIME BLOCKS FOR SELECTED DATE */}
+                        {selectedDate && groupedSessions[selectedDate] && (
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                {groupedSessions[selectedDate]
+                                    .sort((a, b) => new Date(a.start_time) - new Date(b.start_time)) // Sort times early to late
+                                    .map(session => {
+                                        const timeStr = new Date(session.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                                        return (
+                                            <button
+                                                key={session.id}
+                                                onClick={() => navigate(`/book/${session.id}`)}
+                                                className="group relative bg-neutral-900 border border-neutral-800 hover:border-yellow-400 rounded-2xl p-5 flex flex-col items-center gap-2 transition-all active:scale-95 text-center overflow-hidden"
+                                            >
+                                                {/* VIP Background Glow */}
+                                                {session.session_type === 'vip' && (
+                                                    <div className="absolute inset-0 bg-yellow-400/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                )}
+
+                                                <span className="text-xl font-bold text-white group-hover:text-yellow-400 transition-colors">
+                                                    {timeStr}
+                                                </span>
+
+                                                <div className="flex flex-col items-center gap-1">
+                                                    <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded ${session.session_type === 'vip'
+                                                            ? 'bg-yellow-400/20 text-yellow-400 border border-yellow-400/30'
+                                                            : 'bg-neutral-800 text-neutral-400'
+                                                        }`}>
+                                                        {session.session_type === 'vip' ? '★ VIP' : 'Normal'}
+                                                    </span>
+                                                    <span className="text-neutral-500 text-xs text-center truncate w-full">
+                                                        {session.language}
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );
