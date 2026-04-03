@@ -53,7 +53,7 @@ export default function ManageSessions() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json', 
+                    'Accept': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
                 body: JSON.stringify({
@@ -70,7 +70,7 @@ export default function ManageSessions() {
 
             if (!response.ok) {
                 toast.error(data.message || data.error || "Failed to create session");
-                console.log("Validation errors:", data.errors); 
+                console.log("Validation errors:", data.errors);
             } else {
                 setIsOpen(false);
                 toast.success("Session created successfully!");
@@ -133,19 +133,26 @@ export default function ManageSessions() {
                                         {session.film?.title || films.find(f => f.id === session.film_id)?.title || `Film #${session.film_id}`}
                                     </h3>
                                     <span className="text-neutral-400 text-sm font-medium">
-                                        {session.room?.name || rooms.find(r => r.id === session.room_id)?.name || `Room #${session.room_id}`}
+                                        {session.salle?.name || rooms.find(r => r.id === session.salle_id)?.name || `Room #${session.salle_id}`}
                                     </span>
                                 </div>
                                 <div className="text-right">
                                     <div className="bg-yellow-400/10 border border-yellow-400/20 px-3 py-1.5 rounded-lg text-center mb-1">
-                                        <p className="text-yellow-400 font-bold tracking-widest">{session.time}</p>
+                                        <p className="text-yellow-400 font-bold tracking-widest">
+                                            {session.start_time ? new Date(session.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
+                                        </p>
                                     </div>
+                                    {session.session_type === 'vip' && (
+                                        <span className="text-yellow-400 text-[10px] uppercase font-bold tracking-wider mt-1 block">★ VIP</span>
+                                    )}
                                 </div>
                             </div>
 
                             <div className="flex items-center gap-3 bg-neutral-950/50 border border-neutral-800 p-3 rounded-xl">
                                 <span className="text-xl">📅</span>
-                                <span className="text-white font-bold tracking-wide">{session.date}</span>
+                                <span className="text-white font-bold tracking-wide">
+                                    {session.start_time ? new Date(session.start_time).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }) : 'N/A'}
+                                </span>
                             </div>
                         </div>
                     ))}
